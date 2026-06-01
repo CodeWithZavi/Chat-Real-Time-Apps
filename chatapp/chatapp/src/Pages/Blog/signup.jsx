@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE } from '../../config';
+import { authAPI } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 const SignupPage = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -34,35 +36,34 @@ const SignupPage = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        
+
         if (formData.password !== formData.confirmPassword) {
             setError("Passwords do not match!");
             setLoading(false);
             return;
         }
-        
+
         if (formData.password.length < 6) {
             setError("Password must be at least 6 characters long");
             setLoading(false);
             return;
         }
-        
+
         try {
-            const response = await fetch(`${API_BASE}/api/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: formData.username,
-                    password: formData.password,
-                    email: formData.email
-                }),
+            const data = await authAPI.signup({
+                username: formData.username,
+                password: formData.password,
+                email: formData.email
             });
-            const data = await response.json();
-            
-            if (response.ok) {
-                navigate("/login");
+
+            if (data.success) {
+                if (data.token && data.user) {
+                    login(data);
+                    const username = data.user?.username;
+                    navigate(username ? `/${username}/dashboard` : '/dashboard');
+                } else {
+                    navigate('/login');
+                }
             } else {
                 setError(data.message || 'Signup failed');
             }
@@ -100,7 +101,7 @@ const SignupPage = () => {
                             {error}
                         </div>
                     )}
-                    
+
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-gray-300">USERNAME</label>
@@ -147,13 +148,13 @@ const SignupPage = () => {
                                 >
                                     {showPassword ? (
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                                            <line x1="1" y1="1" x2="23" y2="23"/>
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                            <line x1="1" y1="1" x2="23" y2="23" />
                                         </svg>
                                     ) : (
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
                                         </svg>
                                     )}
                                 </button>
@@ -179,13 +180,13 @@ const SignupPage = () => {
                                 >
                                     {showConfirmPassword ? (
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                                            <line x1="1" y1="1" x2="23" y2="23"/>
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                            <line x1="1" y1="1" x2="23" y2="23" />
                                         </svg>
                                     ) : (
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
                                         </svg>
                                     )}
                                 </button>
@@ -208,7 +209,7 @@ const SignupPage = () => {
                     </div>
 
                     <div className="flex justify-center space-x-4 mb-4">
-                        <button 
+                        <button
                             type="button"
                             className="p-2 border-2 border-white rounded-lg hover:bg-white hover:text-black transition-colors"
                         >
@@ -220,7 +221,7 @@ const SignupPage = () => {
                             </svg>
                         </button>
 
-                        <button 
+                        <button
                             type="button"
                             className="p-2 border-2 border-white rounded-lg hover:bg-white hover:text-black transition-colors"
                         >

@@ -4,6 +4,7 @@ const { protect } = require('../middleware/auth');
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const User = require('../models/User');
+const Report = require('../models/Report');
 
 // @desc    Get all conversations
 // @route   GET /api/conversations
@@ -304,9 +305,58 @@ router.post('/messages/:messageId/react', protect, async (req, res) => {
 // @desc    Report conversation
 // @route   POST /api/conversations/:id/report
 router.post('/:id/report', protect, async (req, res) => {
-    // In a real app, save to a Report model.
-    // For now, just acknowledge.
-    res.json({ success: true, message: 'Report submitted' });
+    try {
+        const { reason, messageId, messagePreview, reportType } = req.body;
+
+        if (!reason || typeof reason !== 'string' || reason.trim().length < 3) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid reason'
+            });
+        }
+
+        const conversation = await Conversation.findById(req.params.id);
+        if (!conversation) {
+            return res.status(404).json({ success: false, message: 'Conversation not found' });
+        }
+
+        if (!conversation.isParticipant(req.user.id)) {
+            return res.status(403).json({ success: false, message: 'Not authorized' });
+        }
+
+        let resolvedReportType = reportType === 'message' ? 'message' : 'conversation';
+        let resolvedMessageId = messageId || null;
+        let resolvedPreview = messagePreview || '';
+
+        if (resolvedMessageId) {
+            const message = await Message.findById(resolvedMessageId);
+            if (!message || message.conversationId.toString() !== conversation._id.toString()) {
+                return res.status(400).json({ success: false, message: 'Invalid message for report' });
+            }
+
+            resolvedReportType = 'message';
+            if (!resolvedPreview && message.content) {
+                resolvedPreview = message.content.slice(0, 200);
+            }
+        }
+
+        const report = await Report.create({
+            conversationId: conversation._id,
+            messageId: resolvedMessageId,
+            reportedBy: req.user.id,
+            reportType: resolvedReportType,
+            reason: reason.trim(),
+            messagePreview: resolvedPreview
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Report submitted',
+            report
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
 // @desc    Delete group conversation

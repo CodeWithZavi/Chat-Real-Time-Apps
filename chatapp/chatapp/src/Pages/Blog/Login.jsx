@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE } from '../../config';
+import { authAPI } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 const LoginPage = () => {
     const navigate = useNavigate();
+    const { login, isAuthenticated, user } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -19,6 +21,13 @@ const LoginPage = () => {
             { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }
         );
     }, []);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            const username = user?.username;
+            navigate(username ? `/${username}/dashboard` : '/dashboard', { replace: true });
+        }
+    }, [isAuthenticated, user, navigate]);
 
     const validateForm = () => {
         const newErrors = {};
@@ -70,27 +79,14 @@ const LoginPage = () => {
         setSuccessMessage('');
 
         try {
-            const response = await fetch(`${API_BASE}/api/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: formData.email.toLowerCase().trim(),
-                    password: formData.password
-                })
+            const data = await authAPI.login({
+                email: formData.email.toLowerCase().trim(),
+                password: formData.password
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
-            }
 
             if (data.success) {
                 setSuccessMessage('Login successful! Redirecting...');
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                login(data);
                 gsap.to(containerRef.current, {
                     scale: 1.05,
                     duration: 0.3,
@@ -98,7 +94,8 @@ const LoginPage = () => {
                     repeat: 1,
                     onComplete: () => {
                         setTimeout(() => {
-                            navigate(`/${data.user.username}/dashboard`);
+                            const username = data.user?.username;
+                            navigate(username ? `/${username}/dashboard` : '/dashboard');
                         }, 1000);
                     }
                 });

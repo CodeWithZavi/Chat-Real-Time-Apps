@@ -128,10 +128,13 @@ const ChatHeader = ({
         const reason = prompt("Please provide a reason for reporting this conversation:");
         if (reason) {
             try {
-                await conversationsAPI.reportConversation(chat._id, reason);
+                await conversationsAPI.reportConversation(chat._id, {
+                    reason,
+                    reportType: 'conversation'
+                });
                 alert("Report submitted. Thank you for helping keep our community safe.");
             } catch {
-                alert('Failed to clear chat');
+                alert('Failed to submit report');
             }
         }
         setIsMenuOpen(false);

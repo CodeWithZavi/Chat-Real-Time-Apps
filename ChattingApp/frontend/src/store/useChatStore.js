@@ -8,6 +8,9 @@ const useChatStore = create((set, get) => ({
     conversations: [],
     selectedChat: null,
     messages: [],
+    messagesPage: 1,
+    hasMoreMessages: false,
+    isLoadingMoreMessages: false,
     isLoadingMessages: false,
     areConversationsLoading: false,
     activeTab: 'direct', // 'direct' | 'groups' | 'profile'
@@ -39,7 +42,7 @@ const useChatStore = create((set, get) => ({
         const prevChat = get().selectedChat;
         if (prevChat?._id === chat?._id) return; // No change
 
-        set({ selectedChat: chat, messages: [] }); // Clear prev messages immediately
+        set({ selectedChat: chat, messages: [], messagesPage: 1, hasMoreMessages: false }); // Clear prev messages immediately
 
         if (chat) {
             // Join via socket
@@ -53,7 +56,8 @@ const useChatStore = create((set, get) => ({
             try {
                 const res = await conversationsAPI.getMessages(chat._id);
                 if (res.success) {
-                    set({ messages: res.messages });
+                    const hasMore = res.pagination ? res.pagination.page < res.pagination.pages : false;
+                    set({ messages: res.messages, messagesPage: 1, hasMoreMessages: hasMore });
                 }
             } catch (error) {
                 console.error('Failed to fetch messages:', error);
@@ -107,6 +111,40 @@ const useChatStore = create((set, get) => ({
     },
 
     setMessages: (messages) => set({ messages }),
+
+    clearMessages: () => set({ messages: [], messagesPage: 1, hasMoreMessages: false }),
+
+    loadMoreMessages: async () => {
+        const { selectedChat, isLoadingMoreMessages, hasMoreMessages, messagesPage } = get();
+        if (!selectedChat || isLoadingMoreMessages || !hasMoreMessages) return { added: 0 };
+
+        set({ isLoadingMoreMessages: true });
+
+        try {
+            const nextPage = messagesPage + 1;
+            const res = await conversationsAPI.getMessages(selectedChat._id, nextPage);
+
+            if (res.success) {
+                const existingIds = new Set(get().messages.map(m => m._id));
+                const newMessages = res.messages.filter(m => !existingIds.has(m._id));
+                const hasMore = res.pagination ? nextPage < res.pagination.pages : false;
+
+                set((state) => ({
+                    messages: [...newMessages, ...state.messages],
+                    messagesPage: nextPage,
+                    hasMoreMessages: hasMore
+                }));
+
+                return { added: newMessages.length };
+            }
+        } catch (error) {
+            console.error('Failed to load more messages:', error);
+        } finally {
+            set({ isLoadingMoreMessages: false });
+        }
+
+        return { added: 0 };
+    },
 
     // Mark Read Logic
     markConversationAsRead: async (chatId) => {

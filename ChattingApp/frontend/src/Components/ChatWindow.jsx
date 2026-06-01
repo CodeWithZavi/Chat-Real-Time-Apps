@@ -19,7 +19,11 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
         isLoadingMessages,
         currentUser,
         deleteMessage,
-        updateMessageReaction
+        updateMessageReaction,
+        loadMoreMessages,
+        hasMoreMessages,
+        isLoadingMoreMessages,
+        clearMessages
     } = useChatStore();
 
     // Local UI State
@@ -50,6 +54,7 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
     const [messageToForward, setMessageToForward] = useState(null);
 
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
 
     // --- Helper Functions Definitions (Hoisted by const for usage) ---
 
@@ -85,6 +90,23 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
         const prevIndex = currentMatchIndex - 1 < 0 ? searchMatches.length - 1 : currentMatchIndex - 1;
         setCurrentMatchIndex(prevIndex);
         scrollToMessage(searchMatches[prevIndex]);
+    };
+
+    const handleLoadMore = async () => {
+        if (!hasMoreMessages || isLoadingMoreMessages) return;
+
+        const container = messagesContainerRef.current;
+        const prevScrollHeight = container ? container.scrollHeight : 0;
+        const prevScrollTop = container ? container.scrollTop : 0;
+
+        const result = await loadMoreMessages();
+
+        if (container && result.added > 0) {
+            requestAnimationFrame(() => {
+                const newScrollHeight = container.scrollHeight;
+                container.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
+            });
+        }
     };
 
     // Socket & Effects
@@ -319,7 +341,16 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
         const reason = prompt('Reason for reporting:');
         if (reason) {
             try {
-                await conversationsAPI.reportConversation(chat._id, `Reported: ${msg.content}, Reason: ${reason}`);
+                const preview = msg.content
+                    ? msg.content.slice(0, 200)
+                    : (msg.fileName ? `File: ${msg.fileName}` : '');
+
+                await conversationsAPI.reportConversation(chat._id, {
+                    reason,
+                    reportType: 'message',
+                    messageId: msg._id,
+                    messagePreview: preview
+                });
                 alert('Message reported.');
             } catch (err) { alert('Failed'); }
         }
@@ -351,10 +382,7 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
                 onBack={onBack}
                 onUpdateChat={onUpdateChat}
                 onClearChat={() => {
-                    // Since messages are in store, we might need an action to clear them locally or calling API
-                    // For now, let's assumes just visual clear
-                    // setMessages([]) -> but messages is from store.
-                    // We need clearMessages action? Or just ignore.
+                    clearMessages();
                 }}
                 isSelectionMode={isSelectionMode}
                 selectedMessageIds={selectedMessageIds}
@@ -394,6 +422,10 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
                 searchQuery={searchQuery}
                 isTyping={isTyping}
                 messagesEndRef={messagesEndRef}
+                hasMoreMessages={hasMoreMessages}
+                isLoadingMoreMessages={isLoadingMoreMessages}
+                onLoadMore={handleLoadMore}
+                messagesContainerRef={messagesContainerRef}
             />
 
             <MessageInput

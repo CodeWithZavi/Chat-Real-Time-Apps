@@ -151,7 +151,7 @@ export default function SignInPage() {
     };
 
   return (
-    <div className={`min-h-screen w-full flex overflow-hidden relative ${theme.bg} ${theme.text} transition-colors duration-300`}>
+    <div className={`min-h-screen w-full flex overflow-hidden relative signin-shell ${theme.bg} ${theme.text} transition-colors duration-300`}>
 
       {/* Theme Toggle */}
       <button

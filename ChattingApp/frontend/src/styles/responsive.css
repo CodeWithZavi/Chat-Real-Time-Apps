@@ -1,3 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+    --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    --bg-ink: #0a0a0f;
+    --bg-panel: #12121a;
+    --accent-a: #06b6d4;
+    --accent-b: #6366f1;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-ink);
+    color: #e5e7eb;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+}
+
+.font-body {
+    font-family: var(--font-body);
+}
+
+.app-shell {
+    background-image:
+        radial-gradient(800px circle at 8% 0%, rgba(6, 182, 212, 0.16), transparent 60%),
+        radial-gradient(900px circle at 92% 10%, rgba(99, 102, 241, 0.16), transparent 60%),
+        linear-gradient(180deg, #0a0a0f 0%, #0c0c14 60%, #0a0a0f 100%);
+    position: relative;
+    isolation: isolate;
+}
+
+.app-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg,
+            rgba(255, 255, 255, 0.04) 0,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px,
+            transparent 6px);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.glass-panel {
+    background: linear-gradient(135deg, rgba(19, 19, 26, 0.9), rgba(15, 16, 24, 0.95));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 80px rgba(7, 10, 20, 0.55);
+}
+
+.nav-glass {
+    background: linear-gradient(180deg, rgba(19, 19, 26, 0.92), rgba(16, 16, 22, 0.96));
+}
+
+.signin-shell {
+    background-image:
+        radial-gradient(600px circle at 12% 10%, rgba(6, 182, 212, 0.16), transparent 60%),
+        radial-gradient(600px circle at 88% 85%, rgba(99, 102, 241, 0.16), transparent 60%);
+}
+
+@keyframes orb-drift {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    50% {
+        transform: translate3d(24px, -18px, 0);
+    }
+
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.orb {
+    animation: orb-drift 22s ease-in-out infinite;
+}
+
+.orb-slow {
+    animation-duration: 30s;
+}
+
 /* Responsive Utilities */
 @layer utilities {
 

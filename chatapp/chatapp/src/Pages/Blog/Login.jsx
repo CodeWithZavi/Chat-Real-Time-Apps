@@ -132,35 +132,45 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white flex items-center justify-center p-8">
-            <div ref={containerRef} className="bg-black border-2 border-white rounded-3xl w-full max-w-4xl flex opacity-0">
-                <div className="w-1/2 p-12 flex items-center justify-center border-r-2 border-white">
-                    <h1 className="text-8xl font-black tracking-tighter">LOGIN</h1>
+        <div className="min-h-screen paper-stage flex items-center justify-center p-6 sm:p-10 text-[#0c0c0f]">
+            <div ref={containerRef} className="stage-content ink-card rounded-3xl w-full max-w-5xl flex flex-col md:flex-row opacity-0 overflow-hidden">
+                <div className="w-full md:w-1/2 p-10 md:p-12 flex flex-col justify-between brand-panel">
+                    <div className="brand-grid" />
+                    <div className="relative z-10">
+                        <span className="text-xs uppercase tracking-[0.4em] text-white/70">Welcome back</span>
+                        <h1 className="text-6xl md:text-7xl font-black tracking-tight text-white mt-4">LOGIN</h1>
+                        <p className="text-white/80 mt-4 max-w-sm">
+                            Step into your workspace and pick up the thread where you left off.
+                        </p>
+                    </div>
+                    <div className="relative z-10 text-white/70 text-sm">
+                        Keep your timeline alive with every post.
+                    </div>
                 </div>
 
-                <div className="w-1/2 p-12">
+                <div className="w-full md:w-1/2 p-8 md:p-12">
                     {successMessage && (
-                        <div className="mb-6 p-4 bg-green-900 border border-green-600 rounded-xl text-green-200">
+                        <div className="mb-6 p-4 bg-emerald-900/40 border border-emerald-400/30 rounded-xl text-emerald-100">
                             {successMessage}
                         </div>
                     )}
 
                     {errors.submit && (
-                        <div className="mb-6 p-4 bg-red-900 border border-red-600 rounded-xl text-red-200">
+                        <div className="mb-6 p-4 bg-rose-900/40 border border-rose-400/30 rounded-xl text-rose-100">
                             {errors.submit}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">EMAIL</label>
+                            <label className="text-sm font-bold text-white/70">EMAIL</label>
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 required
-                                className={`w-full bg-transparent border-2 rounded-xl p-4 text-white focus:outline-none transition-colors ${errors.email ? 'border-red-500' : 'border-gray-600 focus:border-white'
+                                className={`w-full rounded-xl p-4 transition-colors input-ink ${errors.email ? 'border-rose-400/70' : 'focus:border-white'
                                     }`}
                                 placeholder="Enter your email"
                                 disabled={isLoading}
@@ -171,14 +181,14 @@ const LoginPage = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">PASSWORD</label>
+                            <label className="text-sm font-bold text-white/70">PASSWORD</label>
                             <input
                                 type="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 required
-                                className={`w-full bg-transparent border-2 rounded-xl p-4 text-white focus:outline-none transition-colors ${errors.password ? 'border-red-500' : 'border-gray-600 focus:border-white'
+                                className={`w-full rounded-xl p-4 transition-colors input-ink ${errors.password ? 'border-rose-400/70' : 'focus:border-white'
                                     }`}
                                 placeholder="Enter your password"
                                 disabled={isLoading}
@@ -192,7 +202,7 @@ const LoginPage = () => {
                             <button
                                 type="button"
                                 onClick={handleForgotPassword}
-                                className="text-gray-400 hover:text-white text-sm underline focus:outline-none disabled:opacity-50"
+                                className="text-white/60 hover:text-white text-sm underline focus:outline-none disabled:opacity-50"
                                 disabled={isLoading}
                             >
                                 Forgot Password?
@@ -202,7 +212,7 @@ const LoginPage = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-white text-black py-4 rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            className="w-full accent-button py-4 rounded-xl font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                             {isLoading ? (
                                 <>
@@ -219,16 +229,16 @@ const LoginPage = () => {
                     </form>
 
                     <div className="flex items-center my-6">
-                        <div className="flex-1 border-t border-gray-600"></div>
-                        <span className="px-4 text-gray-400 text-sm">OR</span>
-                        <div className="flex-1 border-t border-gray-600"></div>
+                        <div className="flex-1 border-t border-white/10"></div>
+                        <span className="px-4 text-white/50 text-sm">OR</span>
+                        <div className="flex-1 border-t border-white/10"></div>
                     </div>
 
                     <div className="flex justify-center space-x-6 mb-6">
                         <button
                             onClick={() => handleSocialLogin('google')}
                             disabled={isLoading}
-                            className="p-3 border-2 border-white rounded-xl hover:bg-white transition-colors disabled:opacity-50"
+                            className="p-3 border border-white/20 rounded-xl hover:bg-white/10 transition-colors disabled:opacity-50"
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M21.8 12.2c0-.6-.1-1.3-.2-1.8H12v3.4h5.5c-.2 1.1-.9 2.1-1.9 2.7v2.4h3.1c1.8-1.7 2.8-4.2 2.8-7.1z" fill="#4285F4" />
@@ -241,7 +251,7 @@ const LoginPage = () => {
                         <button
                             onClick={() => handleSocialLogin('github')}
                             disabled={isLoading}
-                            className="p-3 border-2 border-white rounded-xl hover:bg-white transition-colors disabled:opacity-50"
+                            className="p-3 border border-white/20 rounded-xl hover:bg-white/10 transition-colors disabled:opacity-50"
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12c0-5.52-4.48-10-10-10z" />
@@ -250,7 +260,7 @@ const LoginPage = () => {
                     </div>
 
                     <div className="text-center">
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-white/60 text-sm">
                             Don't have an account?{' '}
                             <button
                                 onClick={handleSignupRedirect}

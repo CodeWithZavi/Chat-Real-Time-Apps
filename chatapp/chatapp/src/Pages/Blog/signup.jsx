@@ -87,50 +87,60 @@ const SignupPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-            <div ref={containerRef} className="bg-black border-2 border-white rounded-3xl w-full max-w-4xl flex opacity-0" style={{ height: '600px' }}>
+        <div className="min-h-screen paper-stage flex items-center justify-center p-6 sm:p-10 text-[#0c0c0f]">
+            <div ref={containerRef} className="stage-content ink-card rounded-3xl w-full max-w-5xl flex flex-col md:flex-row opacity-0 overflow-hidden">
                 {/* Left Side - Signup Title */}
-                <div className="w-1/2 p-8 flex items-center justify-center border-r-2 border-white">
-                    <h1 className="text-6xl font-black tracking-tighter">SIGN UP</h1>
+                <div className="w-full md:w-1/2 p-10 md:p-12 flex flex-col justify-between brand-panel">
+                    <div className="brand-grid" />
+                    <div className="relative z-10">
+                        <span className="text-xs uppercase tracking-[0.4em] text-white/70">Start here</span>
+                        <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mt-4">SIGN UP</h1>
+                        <p className="text-white/80 mt-4 max-w-sm">
+                            Build your profile, share your story, and join the feed.
+                        </p>
+                    </div>
+                    <div className="relative z-10 text-white/70 text-sm">
+                        Your new space is ready when you are.
+                    </div>
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="w-1/2 p-8 flex flex-col justify-center">
+                <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                     {error && (
-                        <div className="mb-4 p-3 bg-red-500 text-white rounded-lg text-sm">
+                        <div className="mb-4 p-3 bg-rose-900/40 text-rose-100 border border-rose-400/30 rounded-lg text-sm">
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">USERNAME</label>
+                            <label className="text-sm font-bold text-white/70">USERNAME</label>
                             <input
                                 type="text"
                                 name="username"
                                 value={formData.username}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full bg-transparent border-2 border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-white transition-colors"
+                                className="w-full rounded-lg p-3 transition-colors input-ink"
                                 placeholder="Enter username"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">EMAIL</label>
+                            <label className="text-sm font-bold text-white/70">EMAIL</label>
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full bg-transparent border-2 border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-white transition-colors"
+                                className="w-full rounded-lg p-3 transition-colors input-ink"
                                 placeholder="Enter email"
                             />
                         </div>
 
                         <div className="space-y-2 relative">
-                            <label className="text-sm font-bold text-gray-300">PASSWORD</label>
+                            <label className="text-sm font-bold text-white/70">PASSWORD</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -138,12 +148,12 @@ const SignupPage = () => {
                                     value={formData.password}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full bg-transparent border-2 border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-white transition-colors pr-10"
+                                    className="w-full rounded-lg p-3 transition-colors input-ink pr-10"
                                     placeholder="Enter password"
                                 />
                                 <button
                                     type="button"
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white focus:outline-none"
                                     onClick={togglePasswordVisibility}
                                 >
                                     {showPassword ? (
@@ -162,7 +172,7 @@ const SignupPage = () => {
                         </div>
 
                         <div className="space-y-2 relative">
-                            <label className="text-sm font-bold text-gray-300">CONFIRM PASSWORD</label>
+                            <label className="text-sm font-bold text-white/70">CONFIRM PASSWORD</label>
                             <div className="relative">
                                 <input
                                     type={showConfirmPassword ? "text" : "password"}
@@ -170,12 +180,12 @@ const SignupPage = () => {
                                     value={formData.confirmPassword}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full bg-transparent border-2 border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-white transition-colors pr-10"
+                                    className="w-full rounded-lg p-3 transition-colors input-ink pr-10"
                                     placeholder="Confirm password"
                                 />
                                 <button
                                     type="button"
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white focus:outline-none"
                                     onClick={toggleConfirmPasswordVisibility}
                                 >
                                     {showConfirmPassword ? (
@@ -196,22 +206,22 @@ const SignupPage = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-white text-black py-3 rounded-lg font-bold hover:bg-gray-200 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors mt-2"
+                            className="w-full accent-button py-3 rounded-lg font-bold disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors mt-2"
                         >
                             {loading ? 'SIGNING UP...' : 'SIGN UP'}
                         </button>
                     </form>
 
                     <div className="flex items-center my-4">
-                        <div className="flex-1 border-t border-gray-600"></div>
-                        <span className="px-3 text-gray-400 text-xs">OR</span>
-                        <div className="flex-1 border-t border-gray-600"></div>
+                        <div className="flex-1 border-t border-white/10"></div>
+                        <span className="px-3 text-white/50 text-xs">OR</span>
+                        <div className="flex-1 border-t border-white/10"></div>
                     </div>
 
                     <div className="flex justify-center space-x-4 mb-4">
                         <button
                             type="button"
-                            className="p-2 border-2 border-white rounded-lg hover:bg-white hover:text-black transition-colors"
+                            className="p-2 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M21.8 12.2c0-.6-.1-1.3-.2-1.8H12v3.4h5.5c-.2 1.1-.9 2.1-1.9 2.7v2.4h3.1c1.8-1.7 2.8-4.2 2.8-7.1z" fill="#4285F4" />
@@ -223,7 +233,7 @@ const SignupPage = () => {
 
                         <button
                             type="button"
-                            className="p-2 border-2 border-white rounded-lg hover:bg-white hover:text-black transition-colors"
+                            className="p-2 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12c0-5.52-4.48-10-10-10z" />
@@ -232,7 +242,7 @@ const SignupPage = () => {
                     </div>
 
                     <div className="text-center">
-                        <p className="text-gray-400 text-xs">
+                        <p className="text-white/60 text-xs">
                             Already have an account?{' '}
                             <button
                                 type="button"

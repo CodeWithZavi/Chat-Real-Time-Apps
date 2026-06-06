@@ -19,7 +19,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.13.2",
     "emoji-picker-react": "^4.16.1",
-    "framer-motion": "^12.26.2",
+    "framer-motion": "12.25.0",
     "lucide-react": "^0.555.0",
     "react": "^19.2.3",
     "react-confetti": "^6.4.0",

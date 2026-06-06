@@ -352,7 +352,7 @@ const ChatWindow = ({ chat, onBack, onUpdateChat }) => {
                     messagePreview: preview
                 });
                 alert('Message reported.');
-            } catch (err) { alert('Failed'); }
+            } catch { alert('Failed'); }
         }
         setContextMenu(null);
     };
